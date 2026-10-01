@@ -1,0 +1,93 @@
+plugins {
+    alias(libs.plugins.shadow)
+    id 'java-library'
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.release = 25
+}
+
+dependencies {
+    implementation project(':common')
+    implementation 'org.yaml:snakeyaml:2.0'
+
+    compileOnly 'gg.soju:soju-api:1.0-SNAPSHOT'
+    annotationProcessor('gg.soju:soju-api:1.0-SNAPSHOT')
+}
+
+shadowJar {
+    archiveFileName = "LuckPerms-Minestom-${project.ext.fullVersion}.jar"
+
+    dependencies {
+        exclude(dependency('com.google.code.gson:gson'))
+        exclude(dependency('com.google.guava:guava'))
+        exclude(dependency('com.google.errorprone:error_prone_annotations'))
+        exclude(dependency('org.jspecify:jspecify'))
+    }
+
+    relocate 'net.kyori.adventure', 'me.lucko.luckperms.lib.adventure'
+    relocate 'net.kyori.event', 'me.lucko.luckperms.lib.eventbus'
+    relocate 'net.kyori.option', 'me.lucko.luckperms.lib.option'
+    relocate 'com.github.benmanes.caffeine', 'me.lucko.luckperms.lib.caffeine'
+    relocate 'okio', 'me.lucko.luckperms.lib.okio'
+    relocate 'okhttp3', 'me.lucko.luckperms.lib.okhttp3'
+    relocate 'net.bytebuddy', 'me.lucko.luckperms.lib.bytebuddy'
+    relocate 'me.lucko.commodore', 'me.lucko.luckperms.lib.commodore'
+    relocate 'org.yaml.snakeyaml', 'me.lucko.luckperms.lib.yaml'
+}
+
+artifacts {
+    archives shadowJar
+}
+
+publishing {
+    repositories {
+        mavenLocal()
+    }
+
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = 'luckperms-minestom'
+
+            from components.java
+
+            pom {
+                name = 'LuckPerms Minestom'
+                description = 'A permissions plugin for Minestom servers.'
+                url = 'https://github.com/domincanish/LuckPerms'
+
+                licenses {
+                    license {
+                        name = 'MIT'
+                        url = 'https://opensource.org/licenses/MIT'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'lucko'
+                        name = 'Luck'
+                        url = 'https://lucko.me'
+                        email = 'git@lucko.me'
+                    }
+                }
+
+                scm {
+                    connection = 'scm:git:https://github.com/dominicanish/LuckPerms.git'
+                    developerConnection = 'scm:git:git@github.com:dominicanish/LuckPerms.git'
+                    url = 'https://github.com/dominicanish/LuckPerms'
+                }
+
+                issueManagement {
+                    system = 'GitHub'
+                    url = 'https://github.com/dominicanish/LuckPerms/issues'
+                }
+            }
+        }
+    }
+}

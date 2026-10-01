@@ -72,6 +72,7 @@ public interface Platform {
         BUKKIT("Bukkit"),
         BUNGEECORD("BungeeCord"),
         SPONGE("Sponge"),
+        MINESTOM("Minestom"),
         NUKKIT("Nukkit"),
         VELOCITY("Velocity"),
         FABRIC("Fabric"),
