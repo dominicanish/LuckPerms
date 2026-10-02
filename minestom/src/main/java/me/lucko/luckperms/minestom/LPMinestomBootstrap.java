@@ -28,6 +28,7 @@ package me.lucko.luckperms.minestom;
 import com.google.inject.Inject;
 import gg.soju.api.event.EventManager;
 import gg.soju.api.event.plugin.PluginSetupEvent;
+import gg.soju.api.event.plugin.PluginTeardownEvent;
 import gg.soju.api.permission.PermissionProvider;
 import gg.soju.api.plugin.Plugin;
 import gg.soju.api.plugin.annotation.DataDirectory;
@@ -90,8 +91,11 @@ public class LPMinestomBootstrap implements LuckPermsBootstrap {
                 Sender sender = this.plugin.getSenderFactory().wrap(commandSender);
                 return sender.isConsole() || sender.hasPermission(permission);
             }));
+        });
 
-            MinecraftServer.getSchedulerManager().buildShutdownTask(this::disable);
+        eventManager.eventNode().addListener(PluginTeardownEvent.class, _ -> {
+            PermissionProvider.set(PermissionProvider.DEFAULT);
+            this.disable();
         });
     }
 
